@@ -1,6 +1,7 @@
 package com.example;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ public class Main {
 
     //  Task:
     //  Использовать стримы.
-    //  Вывести по одному(любому) отелю для курящих из каждого класса
+    //  Вывести по одному отелю для курящих из каждого класса с минимальной ценой за день.
     //  Результат представить в виде Map<RoomClass, pricePerDay>
 
     Map<RoomClass, Integer> result = hotelsSource.stream()
@@ -33,11 +34,12 @@ public class Main {
                 Hotel::getRoomClass,
                 Collectors.collectingAndThen(
                     Collectors.toList(),
-                    hotels -> hotels.get(0).getPricePerDay()
+                    hotels -> hotels.stream().min(
+                        Comparator.comparing(Hotel::getPricePerDay, Integer::compareTo)
+                    ).get().getPricePerDay()
                 )
             )
         );
-
 
     result.forEach((k, v) -> System.out.println(k + " " + v));
   }
